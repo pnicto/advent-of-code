@@ -2,26 +2,16 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"strconv"
 	"strings"
 
 	"github.com/pnicto/aoc/utils"
 )
 
-func toInt(s string) int {
-	num, err := strconv.Atoi(s)
-	if err != nil {
-		log.Fatalln(err, s)
-	}
-	return num
-}
-
 func getSeeds(seedLine string) []int {
 	var seeds []int
 	seedStrings := strings.Fields(seedLine)[1:]
 	for _, seedString := range seedStrings {
-		seeds = append(seeds, toInt(seedString))
+		seeds = append(seeds, utils.ToInt(seedString))
 	}
 
 	return seeds
@@ -39,9 +29,9 @@ func mappify(input string) []Map {
 
 	for _, rangeString := range inputRanges {
 		splits := strings.Split(rangeString, " ")
-		dest := toInt(splits[0])
-		source := toInt(splits[1])
-		offset := toInt(splits[2])
+		dest := utils.ToInt(splits[0])
+		source := utils.ToInt(splits[1])
+		offset := utils.ToInt(splits[2])
 		maps = append(maps, Map{dest, source, offset})
 	}
 	return maps
