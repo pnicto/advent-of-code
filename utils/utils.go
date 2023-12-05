@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -22,4 +23,12 @@ func ReadInput(filename string) string {
 	contents := string(b)
 	contents = strings.TrimSpace(contents)
 	return contents
+}
+
+func ToInt(s string) int {
+	num, err := strconv.Atoi(s)
+	if err != nil {
+		log.Fatalln(err, s)
+	}
+	return num
 }
