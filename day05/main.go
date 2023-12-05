@@ -27,8 +27,14 @@ func getSeeds(seedLine string) []int {
 	return seeds
 }
 
-func mappify(input string) map[int]int {
-	lookup := make(map[int]int)
+type Map struct {
+	destination int
+	source      int
+	offset      int
+}
+
+func mappify(input string) []Map {
+	var maps []Map
 	inputRanges := strings.Split(input, "\n")[1:]
 
 	for _, rangeString := range inputRanges {
@@ -36,16 +42,23 @@ func mappify(input string) map[int]int {
 		dest := toInt(splits[0])
 		source := toInt(splits[1])
 		offset := toInt(splits[2])
-		for i := offset - 1; i >= 0; i-- {
-			lookup[source+i] = dest + i
+		maps = append(maps, Map{dest, source, offset})
+	}
+	return maps
+}
+
+func lookup(target int, table []Map) int {
+	for _, m := range table {
+		if target >= m.source && target < m.source+m.offset {
+			return m.destination + (target - m.source)
 		}
 	}
-	return lookup
+	return target
 }
 
 func part1(contents string) int {
 	leastLocation := -1
-	var lookups []map[int]int
+	var lookups [][]Map
 
 	splits := strings.Split(contents, "\n\n")
 	seeds := getSeeds(splits[0])
@@ -56,12 +69,11 @@ func part1(contents string) int {
 
 	for _, seed := range seeds {
 		prevLookup := seed
-		for _, lookup := range lookups {
-			val, ok := lookup[prevLookup]
-			if ok {
-				prevLookup = val
-			}
+
+		for _, l := range lookups {
+			prevLookup = lookup(prevLookup, l)
 		}
+
 		if leastLocation == -1 || prevLookup < leastLocation {
 			leastLocation = prevLookup
 		}
