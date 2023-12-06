@@ -72,7 +72,48 @@ func part1(contents string) int {
 	return leastLocation
 }
 
+func getSeedsPart2(seedLine string) [][]int {
+	var seeds [][]int
+
+	seedStrings := strings.Fields(seedLine)[1:]
+
+	for i := 0; i < len(seedStrings); i += 2 {
+		seeds = append(seeds, []int{utils.ToInt(seedStrings[i]), utils.ToInt(seedStrings[i+1])})
+	}
+
+	return seeds
+}
+
+func part2(contents string) int {
+	leastLocation := -1
+	var lookups [][]Map
+
+	splits := strings.Split(contents, "\n\n")
+	seeds := getSeedsPart2(splits[0])
+
+	for _, split := range splits[1:] {
+		lookups = append(lookups, mappify(split))
+	}
+
+	for _, srange := range seeds {
+		for i := srange[0]; i < srange[0]+srange[1]; i++ {
+			prevLookup := i
+
+			for _, l := range lookups {
+				prevLookup = lookup(prevLookup, l)
+			}
+
+			if leastLocation == -1 || prevLookup < leastLocation {
+				leastLocation = prevLookup
+			}
+		}
+	}
+
+	return leastLocation
+}
+
 func main() {
 	contents := utils.ReadInput("input.txt")
 	fmt.Println(part1(contents))
+	fmt.Println(part2(contents))
 }
