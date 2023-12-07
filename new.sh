@@ -8,7 +8,16 @@ formatted_day=$(printf "%02d" "$1")
 
 dir_name="day$formatted_day"
 
-mkdir -p "$dir_name"
+if [ -z "$day" ]; then
+	echo "Usage: $0 <day>"
+	echo "Example: $0 1"
+	exit 1
+fi
+
+if ! mkdir "$dir_name" &>/dev/null; then
+	echo "Failed to create directory"
+	exit 1
+fi
 
 curl "https://adventofcode.com/2023/day/$day/input" \
 	-H 'authority: adventofcode.com' \
