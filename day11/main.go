@@ -92,7 +92,11 @@ func findNumberEmptyColumns(g1 []int, g2 []int, emptyColumns []int) int {
 	return n
 }
 
-func findShortestPath(galaxies [][]int, emptyRows []int, emptyColumns []int) int {
+func findShortestPath(galaxies [][]int, emptyRows []int, emptyColumns []int, part int) int {
+	space := 2
+	if part == 2 {
+		space = 1000000
+	}
 	shortestPath := 0
 	for x, g1 := range galaxies {
 		for y, g2 := range galaxies {
@@ -100,7 +104,7 @@ func findShortestPath(galaxies [][]int, emptyRows []int, emptyColumns []int) int
 				dist := findDistance(g1, g2)
 				nx := findNumberEmptyRows(g1, g2, emptyRows)
 				ny := findNumberEmptyColumns(g1, g2, emptyColumns)
-				dist = dist + nx + ny
+				dist = dist + (space-1)*(nx+ny)
 				shortestPath += dist
 			}
 		}
@@ -114,10 +118,20 @@ func part1(contents string) int {
 	emptyRows := findEmptyRows(lines)
 	emptyColumns := findEmptyColumns(lines)
 
-	return findShortestPath(galaxies, emptyRows, emptyColumns)
+	return findShortestPath(galaxies, emptyRows, emptyColumns, 1)
+}
+
+func part2(contents string) int {
+	lines := strings.Split(contents, "\n")
+	galaxies := findGalaxies(lines)
+	emptyRows := findEmptyRows(lines)
+	emptyColumns := findEmptyColumns(lines)
+
+	return findShortestPath(galaxies, emptyRows, emptyColumns, 2)
 }
 
 func main() {
-	contents := utils.ReadInput("sample.txt")
+	contents := utils.ReadInput("input.txt")
 	fmt.Println(part1(contents))
+	fmt.Println(part2(contents))
 }
