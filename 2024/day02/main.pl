@@ -54,3 +54,32 @@ sub is_decreasing {
   }
   return 1;
 }
+
+$count = 0;
+
+# part 2
+foreach my $line (@input) {
+  my @numbers = split(/ /, $line);
+
+  my $increasing = is_increasing(\@numbers);
+  my $decreasing = is_decreasing(\@numbers);
+
+  if ($increasing or $decreasing) {
+    $count++;
+  } else {
+    # if it's not the usual then remove 1 element and check if it's gonna work
+    for (my $i = 0; $i <= $#numbers; $i++) {
+      my $removed = splice(@numbers, $i, 1);
+      my $increasing = is_increasing(\@numbers);
+      my $decreasing = is_decreasing(\@numbers);
+      if ($increasing or $decreasing) {
+        $count++;
+        splice(@numbers, $i, 0, $removed);
+        last;
+      }
+      splice(@numbers, $i, 0, $removed);
+    }
+  }
+}
+
+print "part 2: $count\n";
