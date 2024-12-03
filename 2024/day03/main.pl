@@ -20,3 +20,33 @@ for my $match (@matches) {
 }
 say "part1: $sum";
 
+my $index = 0;
+my $n = length($input);
+my $enabled = 1;
+$sum = 0;
+
+while($index < $n) {
+  if (substr($input, $index, 7) eq "don't()") {
+    $enabled = 0;
+    $index = $index + 7;
+  }
+  elsif (substr($input, $index, 4) eq "do()") {
+    $enabled = 1;
+    $index = $index + 4;
+  }
+  elsif (substr($input, $index, 4) eq "mul(") {
+    my $match = substr($input, $index, 13) =~ /mul\(\d{0,3},\d{0,3}\)/;
+    if ($match) {
+      my ($a, $b) = $& =~ /(\d+)/g;
+      $sum = $sum + $a * $b if $enabled;
+      $index = $index + length($&);
+    }
+    else {
+      $index = $index + 1;
+    }
+  }
+  else {
+    $index = $index + 1;
+  }
+}
+say "part2: $sum";
