@@ -66,3 +66,30 @@ for (my $row = 0; $row < $m; $row++) {
 }
 
 say "part1 : $part1";
+
+my $part2 = 0;
+for (my $row = 0; $row < $m; $row++) {
+  for (my $col = 0; $col < $n; $col++) {
+    next if $input[$row][$col] ne "A";
+
+    say "iteration $row, $col";
+    my $is_xmas = 1;
+    if ($row-1 >= 0 && $row+1 < $m && $col-1 >= 0 && $col+1 < $n) {
+      if (not (($input[$row-1][$col-1] eq "M" and $input[$row+1][$col+1] eq "S") or ($input[$row-1][$col-1] eq "S" and $input[$row+1][$col+1] eq "M"))) {
+        $is_xmas = 0;
+      }
+      if (not (($input[$row+1][$col-1] eq "M" and $input[$row-1][$col+1] eq "S") or ($input[$row+1][$col-1] eq "S" and $input[$row-1][$col+1] eq "M"))) {
+        $is_xmas = 0;
+      }
+    } else {
+      $is_xmas = 0;
+    }
+
+    if ($is_xmas) {
+      say "found for $row, $col";
+      $part2++;
+    }
+    say "";
+  }
+}
+say "part2 : $part2";
