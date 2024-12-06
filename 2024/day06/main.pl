@@ -27,6 +27,7 @@ for my $i (0..$m) {
         }
     }
 }
+my $start = [$x, $y];
 dump $x, $y;
 
 my $part1 = 0;
@@ -62,3 +63,58 @@ while ($x >= 0 && $x <= $m && $y >= 0 && $y <= $n) {
 # count the number of painted cells
 map { $part1 += grep { $_ eq '%' } @$_ } @map;
 say "part1: $part1";
+
+sub loop_check {
+  my $x = shift;
+  my $y = shift;
+  my $current_direction = shift;
+  my @map = @_;
+
+  my %visited;
+
+  while ($x >= 0 && $x <= $m && $y >= 0 && $y <= $n) {
+    if ($visited{"$x,$y,$current_direction"}) {
+      return 1;
+    }
+    $visited{"$x,$y,$current_direction"} = 1;
+    my $dx = $directions[$current_direction][0];
+    my $dy = $directions[$current_direction][1];
+
+    my $next_x = $x + $dx;
+    my $next_y = $y + $dy;
+
+    if ($next_x < 0 || $next_x > $m || $next_y < 0 || $next_y > $n) {
+      last;
+    }
+
+    if ($map[$next_x][$next_y] eq '#') {
+      $current_direction = ($current_direction + 1) % 4;
+    } else {
+      $x = $next_x;
+      $y = $next_y;
+    }
+  }
+
+  return 0;
+}
+
+my $part2 = 0;
+$x = $start->[0];
+$y = $start->[1];
+$current_direction = 0;
+
+for my $i (0..$m) {
+    for my $j (0..$n) {
+        if ($map[$i][$j] ne '#') {
+          my $temp = $map[$i][$j];
+          $map[$i][$j] = '#';
+          dump $i, $j, $m, $n;
+          if (loop_check($x, $y, $current_direction, @map)) {
+            $part2++;
+          }
+          $map[$i][$j] = $temp;
+        }
+    }
+}
+
+say "part2: $part2";
