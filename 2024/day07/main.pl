@@ -13,85 +13,57 @@ my @input = split(/\n/, $input);
 while (my ($index, $test) = each @input) {
   my @parts = split(/: /, $test);
   my @nums = split(/ /, $parts[1]);
-  @input[$index] = [$parts[0], $#nums+1, [@nums]];
+  @input[$index] = [$parts[0], [@nums]];
 }
 
 sub is_valid_test {
-  my ($target, $size, @nums) = @_;
-  return 1 if $size == 1 && $nums[0] == $target;
-  return check_target($target, 0, 0, $size, @nums);
+  my ($target, $nums, $is_part1) = @_;
+  return 1 if @$nums == 1 && $nums->[0] == $target;
+  return check_target($target, 0, 0, $nums, $is_part1);
 }
 
 sub check_target{
-  my ($target, $current_result, $index, $size, @nums) = @_;
+  my ($target, $current_result, $index, $nums, $is_part1) = @_;
 
-  if ($index == $size) {
+  if ($index == @$nums) {
     return $current_result == $target;
   }
 
-  # WHY???????
-  my $num = $nums[0][$index];
+  my $num = $nums->[$index];
   my $summ = 0;
   my $multi = 0;
+  my $concat = 0;
 
-  $summ = (check_target($target, $current_result + $num, $index+1, $size, @nums));
+  $summ = check_target($target, $current_result + $num, $index+1, $nums, $is_part1);
   if ($index == 0) {
-    $multi = (check_target($target, $num, $index + 1, $size, @nums));
+    $multi = check_target($target, $num, $index + 1, $nums, $is_part1);
   } else {
-    $multi = (check_target($target, $current_result * $num, $index + 1, $size, @nums));
+    $multi = check_target($target, $current_result * $num, $index + 1, $nums, $is_part1);
+  }
+  if ($is_part1) {
+    $concat = check_target($target, $current_result . $num, $index + 1, $nums, $is_part1);
   }
 
-  return $summ == 1 || $multi == 1;
+  return $summ == 1 || $multi == 1 || $concat == 1;
 }
 
 my $part1 = 0;
 for my $test (@input) {
   my $target = $test->[0];
-  my $size = $test->[1];
-  my @nums = $test->[2];
+  my $nums = $test->[1];
 
-  if (is_valid_test($target, $size, @nums)) {
+  if (is_valid_test($target, $nums)) {
     $part1 += $target;
   }
 }
 say "Part 1: $part1";
 
-sub is_valid_t {
-  my ($target, $size, @nums) = @_;
-  return 1 if $size == 1 && $nums[0] == $target;
-  return check_target2($target, 0, 0, $size, @nums);
-}
-
-sub check_target2{
-  my ($target, $current_result, $index, $size, @nums) = @_;
-
-  if ($index == $size) {
-    return $current_result == $target;
-  }
-
-  # WHY???????
-  my $num = $nums[0][$index];
-  my $summ = 0;
-  my $multi = 0;
-  my $concat = 0;
-
-  $summ = (check_target2($target, $current_result + $num, $index+1, $size, @nums));
-  if ($index == 0) {
-    $multi = (check_target2($target, $num, $index + 1, $size, @nums));
-  } else {
-    $multi = (check_target2($target, $current_result * $num, $index + 1, $size, @nums));
-  }
-  $concat = (check_target2($target, $current_result . $num, $index + 1, $size, @nums));
-
-  return $summ == 1 || $multi == 1 || $concat == 1;
-}
-
 my $part2 = 0;
 for my $test (@input) {
   my $target = $test->[0];
-  my $size = $test->[1];
-  my @nums = $test->[2];
-  if (is_valid_t($target, $size, @nums)) {
+  my $nums = $test->[1];
+
+  if (is_valid_test($target, $nums, 1)) {
     $part2 += $target;
   }
 }
