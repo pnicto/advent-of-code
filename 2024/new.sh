@@ -39,3 +39,4 @@ curl "https://adventofcode.com/2024/day/$day/input" \
   -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0' \
   --compressed --output "$dir_name/input.txt"
 touch "$dir_name/sample.txt"
+cp template.pl "$dir_name/main.pl"
