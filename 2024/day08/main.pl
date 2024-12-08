@@ -86,3 +86,118 @@ dump \%antinodes;
 my $part1 = scalar keys %antinodes;
 say "Part 1: $part1";
 
+undef %antinodes;
+
+@input_copy = @input;
+while ( my ( $key, $value ) = each %frequency_map ) {
+    my @pairs = @$value;
+    for my $i ( 0 .. $#pairs ) {
+        for my $j ( $i + 1 .. $#pairs ) {
+            my $x_dist = abs( $pairs[$i][0] - $pairs[$j][0] );
+            my $y_dist = abs( $pairs[$i][1] - $pairs[$j][1] );
+
+            $antinodes{"$pairs[$i][0],$pairs[$i][1]"} = 1;
+            $antinodes{"$pairs[$j][0],$pairs[$j][1]"} = 1;
+
+            my $antinode1;
+            my $antinode2;
+            if ( $pairs[$i][1] < $pairs[$j][1] ) {
+                $antinode1 =
+                  [ $pairs[$i][0] - $x_dist, $pairs[$i][1] - $y_dist ];
+                $antinode2 =
+                  [ $pairs[$j][0] + $x_dist, $pairs[$j][1] + $y_dist ];
+            }
+            else {
+                $antinode1 =
+                  [ $pairs[$i][0] - $x_dist, $pairs[$i][1] + $y_dist ];
+                $antinode2 =
+                  [ $pairs[$j][0] + $x_dist, $pairs[$j][1] - $y_dist ];
+            }
+
+            while ( $antinode1->[0] >= 0
+                and $antinode1->[0] < $m
+                and $antinode1->[1] >= 0
+                and $antinode1->[1] < $n )
+            {
+                $antinodes{"$antinode1->[0],$antinode1->[1]"} = 1;
+                $input_copy[ $antinode1->[0] ][ $antinode1->[1] ] = '#';
+                if ( $pairs[$i][1] < $pairs[$j][1] ) {
+                    $antinode1->[0] = $antinode1->[0] - $x_dist;
+                    $antinode1->[1] = $antinode1->[1] - $y_dist;
+                }
+                else {
+                    $antinode1->[0] = $antinode1->[0] - $x_dist;
+                    $antinode1->[1] = $antinode1->[1] + $y_dist;
+                }
+            }
+            while ( $antinode2->[0] >= 0
+                and $antinode2->[0] < $m
+                and $antinode2->[1] >= 0
+                and $antinode2->[1] < $n )
+            {
+                $antinodes{"$antinode2->[0],$antinode2->[1]"} = 1;
+                $input_copy[ $antinode2->[0] ][ $antinode2->[1] ] = '#';
+                if ( $pairs[$i][1] < $pairs[$j][1] ) {
+                    $antinode2->[0] = $antinode2->[0] + $x_dist;
+                    $antinode2->[1] = $antinode2->[1] + $y_dist;
+                }
+                else {
+                    $antinode2->[0] = $antinode2->[0] + $x_dist;
+                    $antinode2->[1] = $antinode2->[1] - $y_dist;
+                }
+            }
+
+            if ( $pairs[$i][1] < $pairs[$j][1] ) {
+                $antinode1 =
+                  [ $pairs[$i][0] - $x_dist, $pairs[$i][1] - $y_dist ];
+                $antinode2 =
+                  [ $pairs[$j][0] + $x_dist, $pairs[$j][1] + $y_dist ];
+            }
+            else {
+                $antinode1 =
+                  [ $pairs[$i][0] - $x_dist, $pairs[$i][1] + $y_dist ];
+                $antinode2 =
+                  [ $pairs[$j][0] + $x_dist, $pairs[$j][1] - $y_dist ];
+            }
+
+            while ( $antinode1->[0] >= 0
+                and $antinode1->[0] < $m
+                and $antinode1->[1] >= 0
+                and $antinode1->[1] < $n )
+            {
+                $antinodes{"$antinode1->[0],$antinode1->[1]"} = 1;
+                $input_copy[ $antinode1->[0] ][ $antinode1->[1] ] = '#';
+                if ( $pairs[$i][1] < $pairs[$j][1] ) {
+                    $antinode1->[0] = $antinode1->[0] + $x_dist;
+                    $antinode1->[1] = $antinode1->[1] + $y_dist;
+                }
+                else {
+                    $antinode1->[0] = $antinode1->[0] + $x_dist;
+                    $antinode1->[1] = $antinode1->[1] - $y_dist;
+                }
+            }
+            while ( $antinode2->[0] >= 0
+                and $antinode2->[0] < $m
+                and $antinode2->[1] >= 0
+                and $antinode2->[1] < $n )
+            {
+                $antinodes{"$antinode2->[0],$antinode2->[1]"} = 1;
+                $input_copy[ $antinode2->[0] ][ $antinode2->[1] ] = '#';
+                if ( $pairs[$i][1] < $pairs[$j][1] ) {
+                    $antinode2->[0] = $antinode2->[0] - $x_dist;
+                    $antinode2->[1] = $antinode2->[1] - $y_dist;
+                }
+                else {
+                    $antinode2->[0] = $antinode2->[0] - $x_dist;
+                    $antinode2->[1] = $antinode2->[1] + $y_dist;
+                }
+            }
+
+        }
+    }
+}
+
+dump @input_copy;
+
+my $part2 = scalar keys %antinodes;
+say "Part 2: $part2";
