@@ -86,3 +86,66 @@ sub part1 {
 
 part1();
 
+sub rearrange_filesystem2 {
+    my (@filesystem) = @_;
+    my $right        = @filesystem - 1;
+    my $n            = $right - 1;
+
+    while ( $filesystem[$right] eq "." ) { $right--; }
+
+    while ( $right >= 0 ) {
+        my $temp  = $right;
+        my $count = 0;
+        while ( $filesystem[$temp] eq $filesystem[$right] ) {
+            $count++;
+            $temp--;
+        }
+
+        my $left        = 0;
+        my $found_space = 0;
+        while ( $left < $right ) {
+            my $free_space = 0;
+            my $temp       = $left;
+            while ( $filesystem[$temp] ne "." && $temp < $right ) {
+                $temp++;
+            }
+            $left = $temp;
+            while ( $filesystem[$temp] eq "." && $temp < $right ) {
+                $free_space++;
+                $temp++;
+            }
+
+            if ( $free_space >= $count ) {
+                $found_space = 1;
+                last;
+            }
+            else {
+                $left = $temp;
+            }
+        }
+
+        if ($found_space) {
+            for my $i ( 0 .. $count - 1 ) {
+                $filesystem[$left]  = $filesystem[$right];
+                $filesystem[$right] = ".";
+                $left++;
+                $right--;
+            }
+        }
+        else {
+            $right -= $count;
+        }
+    }
+
+    return @filesystem;
+}
+
+sub part2 {
+    my @filesystem = generate_filesystem($input);
+    say "filesystem generated";
+    my @rearranged = rearrange_filesystem2(@filesystem);
+    say "filesystem rearranged";
+    say "part 2: ", calculate_checksum(@rearranged);
+}
+
+part2();
