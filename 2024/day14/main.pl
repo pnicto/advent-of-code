@@ -69,7 +69,10 @@ sub draw_and_get_grid {
     }
 
     for my $row (@grid) {
-        dump $row;
+        for my $x (@$row) {
+            print $x;
+        }
+        print "\n";
     }
 
     return \@grid;
@@ -80,21 +83,10 @@ sub simulate_robot {
     my $position = $robot->position;
     my $velocity = $robot->velocity;
 
-    my $new_position =
-      [ $position->[0] + $velocity->[0], $position->[1] + $velocity->[1] ];
-
-    if ( $new_position->[0] < 0 ) {
-        $new_position->[0] += $m;
-    }
-    if ( $new_position->[1] < 0 ) {
-        $new_position->[1] += $n;
-    }
-    if ( $new_position->[0] >= $m ) {
-        $new_position->[0] -= $m;
-    }
-    if ( $new_position->[1] >= $n ) {
-        $new_position->[1] -= $n;
-    }
+    my $new_position = [
+        ( $position->[0] + $velocity->[0] ) % $m,
+        ( $position->[1] + $velocity->[1] ) % $n
+    ];
     $robot->position($new_position);
 }
 
@@ -164,4 +156,20 @@ sub part1 {
 
 }
 
+sub part2 {
+    my ( $simulation_limit_in_seconds, $robots, $m, $n ) = @_;
+    for my $second ( 101 .. $simulation_limit_in_seconds ) {
+        for my $robot (@$robots) {
+            simulate_robot( $robot, $m, $n );
+        }
+        if ( $second == 6516 ) {
+            system("clear");
+            say $second;
+            draw_and_get_grid( $robots, $m, $n );
+            select( undef, undef, undef, 20 );
+        }
+    }
+}
+
 part1( 100, \@robots, 103, 101 );
+part2( 600000, \@robots, 103, 101 );
